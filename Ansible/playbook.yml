@@ -1,0 +1,69 @@
+# playbook.yml
+- hosts: webserver
+  become: yes
+  vars:
+    python_version: '3.12.0'
+    django_version: '5.1.1'
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install build dependencies
+      apt:
+        name:
+          - build-essential
+          - zlib1g-dev
+          - libncurses5-dev
+          - libgdbm-dev
+          - libnss3-dev
+          - libssl-dev
+          - libreadline-dev
+          - libffi-dev
+          - libsqlite3-dev
+          - wget
+          - libbz2-dev
+          - liblzma-dev
+          - libgdbm-compat-dev
+          - uuid-dev
+        state: present
+
+    - name: Download Python {{ python_version }}
+      get_url:
+        url: "https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tgz"
+        dest: "/tmp/Python-{{ python_version }}.tgz"
+
+    - name: Extract Python source
+      unarchive:
+        src: "/tmp/Python-{{ python_version }}.tgz"
+        dest: "/tmp/"
+        remote_src: yes
+
+    - name: Configure Python
+      command: "./configure --enable-optimizations"
+      args:
+        chdir: "/tmp/Python-{{ python_version }}"
+
+    - name: Compile and install Python
+      command: "make altinstall"
+      args:
+        chdir: "/tmp/Python-{{ python_version }}"
+
+    - name: Ensure pip is installed
+      command: "/usr/local/bin/python{{ python_version_short }} -m ensurepip --upgrade"
+      vars:
+        python_version_short: "{{ python_version[:4] }}"
+
+    - name: Install Django {{ django_version }}
+      pip:
+        name: "Django=={{ django_version }}"
+        executable: "/usr/local/bin/pip{{ python_version_short }}"
+
+    - name: Verify Django installation
+      command: "/usr/local/bin/python{{ python_version_short }} -m django --version"
+      register: django_version_output
+
+    - name: Display Django version
+      debug:
+        msg: "Installed Django version: {{ django_version_output.stdout }}"
