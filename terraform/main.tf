@@ -67,6 +67,14 @@ resource "aws_security_group" "app_sg" {
     cidr_blocks = [var.allowed_ip]
   }
 
+  ingress {
+    description = "Allow SSH access"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [var.ssh_allowed_ip]
+  }
+
   egress {
     description = "Allow all outbound traffic"
     from_port   = 0

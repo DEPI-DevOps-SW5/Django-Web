@@ -68,3 +68,9 @@ variable "instance_profile_name" {
   description = "Name for the IAM instance profile"
   type        = string
 }
+
+variable "ssh_allowed_ip" {
+  description = "IP addresses allowed to SSH into the EC2 instance"
+  type        = string
+  default     = "0.0.0.0/0"  # Replace with your public IP for security
+}
