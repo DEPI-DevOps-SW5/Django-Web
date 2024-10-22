@@ -9,6 +9,7 @@ pipeline {
         TERRAFORM_DIR = 'terraform'
         ANSIBLE_DIR = 'Ansible'
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials') // ID of Docker Hub credentials in Jenkins
+        ANSIBLE_HOST_KEY_CHECKING = 'False' // Disable host key checking
     }
 
     stages {
@@ -78,7 +79,7 @@ pipeline {
             steps {
                 dir("${env.ANSIBLE_DIR}") {
                         sh """
-                            ansible-playbook -i hosts.ini playbook.yml
+                            ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts.ini playbook.yml
                         """
                     
                 }
