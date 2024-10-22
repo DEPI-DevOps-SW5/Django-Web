@@ -1,4 +1,7 @@
-# main.tf
+#########################
+# VPC and Networking
+#########################
+
 # VPC
 resource "aws_vpc" "main_vpc" {
   cidr_block = var.vpc_cidr_block
@@ -20,6 +23,7 @@ resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = var.public_subnet_cidr
   map_public_ip_on_launch = true
+  availability_zone       = "us-east-1b"  # Adjust based on your region
   tags = {
     Name = "${var.environment}-public-subnet"
   }
@@ -46,7 +50,10 @@ resource "aws_route" "internet_access" {
   gateway_id             = aws_internet_gateway.igw.id
 }
 
+#########################
 # Security Group
+#########################
+
 resource "aws_security_group" "app_sg" {
   name        = "${var.environment}-app-sg"
   description = "Allow inbound traffic to the application"
@@ -73,7 +80,10 @@ resource "aws_security_group" "app_sg" {
   }
 }
 
+#########################
 # EC2 Instance
+#########################
+
 resource "aws_instance" "app_instance" {
   ami                         = var.ami_id
   instance_type               = var.instance_type
@@ -84,7 +94,7 @@ resource "aws_instance" "app_instance" {
   iam_instance_profile        = aws_iam_instance_profile.ec2_instance_profile.name
 
   tags = {
-    Name = "${var.environment}-django-app-instance"
+    Name = var.ec2_tag_name
   }
 
   user_data = <<-EOF

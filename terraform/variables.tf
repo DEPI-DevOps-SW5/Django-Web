@@ -1,4 +1,3 @@
-# variables.tf
 variable "aws_region" {
   description = "The AWS region to deploy resources"
   type        = string
@@ -52,5 +51,20 @@ variable "allowed_ip" {
 
 variable "docker_image" {
   description = "Docker image to deploy"
+  type        = string
+}
+
+variable "ec2_tag_name" {
+  description = "Name tag for the EC2 instance"
+  type        = string
+}
+
+variable "instance_role_name" {
+  description = "Name for the IAM role attached to EC2"
+  type        = string
+}
+
+variable "instance_profile_name" {
+  description = "Name for the IAM instance profile"
   type        = string
 }
