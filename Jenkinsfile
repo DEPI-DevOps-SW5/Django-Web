@@ -43,12 +43,12 @@ pipeline {
                 script {
                     // Extract the public IP from Terraform output
                     dir("${env.TERRAFORM_DIR}") {
-                        ec2_ip = sh(script: 'terraform output -raw ec2_public_ip', returnStdout: true).trim()
+                        ec2_ip = sh(script: 'terraform output -raw app_instance_public_ip', returnStdout: true).trim()
                     }
                     // Update Ansible hosts.ini
                     writeFile file: "${env.ANSIBLE_DIR}/hosts.ini", text: """
                     [webserver]
-                    ${ec2_ip} ansible_user=ubuntu ansible_ssh_private_key_file=../node1.pem
+                    ${ec2_ip} ansible_user=ubuntu ansible_ssh_private_key_file=../node1.pem ansible_python_interpreter=/usr/bin/python3
                     """
                     // Make the SSH key available to Ansible
                     sh "chmod 600 ${env.ANSIBLE_DIR}/../node1.pem"
