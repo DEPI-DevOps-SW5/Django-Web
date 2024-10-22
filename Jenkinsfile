@@ -53,6 +53,9 @@ pipeline {
                     """
                     // Make the SSH key available to Ansible
                     sh "chmod 600 ${env.ANSIBLE_DIR}/../node1.pem"
+
+                    // Store the EC2 IP in the global environment variable
+                    env.EC2_IP = ec2_ip
                 }
             }
         }
@@ -93,6 +96,8 @@ pipeline {
         }
         success {
             echo 'Deployment completed successfully!'
+            echo "EC2 Instance IP: ${env.EC2_IP}"
+            // Optional: Add notifications here (e.g., Email, Slack)
         }
         failure {
             echo 'Deployment failed. Check the logs for details.'
