@@ -89,6 +89,5 @@ local_settings.py
 db.sqlite3
 
 .csv
-.pem
 jenkins-terraform-user_accessKeys.csv
-node1.pem
+.terraform
